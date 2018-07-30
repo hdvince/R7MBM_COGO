@@ -52,12 +52,12 @@ occupancy.sp<-table(boxes$sp1[boxes$sp1 != "UNOC"])
 occupancy.sp
 
   #occupancy by sp w/o UNOC or RDSQ
-occupancy.birds<-occupancy.table[!(names(occupancy.table) %in% c("UNOC", "RDSQ"))]
+occupancy.birds<-occupancy[!(names(occupancy) %in% c("UNOC", "RDSQ"))]
 occupancy.birds
 
   #occupancy count w/o RDSQ
 x.occupancy.total <- length(boxes$box[boxes$sp1 != "UNOC" & boxes$sp1 != "RDSQ"])
-occupancy.total<-sum(occupancy.table[!(names(occupancy.table) %in% c("UNOC", "RDSQ"))])
+occupancy.total<-sum(occupancy[!(names(occupancy) %in% c("UNOC", "RDSQ"))])
 occupancy.total
 
   #occupancy count COGO
@@ -78,31 +78,31 @@ occupancy.plot3<-plot(table(boxes$sp1[!(boxes$sp1 %in% c("UNOC", "RDSQ"))]), xla
 occupancy.plot3
 
   #occupancy frequencies by sp (prop 150 boxes)
-occupancy.freq.150<-prop.table(occupancy.table)
+occupancy.freq.150<-prop.table(occupancy)
 occupancy.freq.150
 
 
   #occupancy frequency BOOW (prop 150 boxes)
-occupancy.freq.150.BOOW <- prop.table(occupancy.table)[1]
+occupancy.freq.150.BOOW <- prop.table(occupancy)[1]
 occupancy.freq.150.BOOW
 
   #occupancy frequencies w/o UNOC
-occupancy.freq.sp.150<-prop.table(occupancy.table)[(names(occupancy) != "UNOC")]
+occupancy.freq.sp.150<-prop.table(occupancy)[(names(occupancy) != "UNOC")]
 occupancy.freq.sp.150
 
   #occupancy frequencies w/o UNOC or RDSQ (prop 150 boxes)
-occupancy.freq.birds.150<-prop.table(occupancy.table)[!(names(occupancy.table) %in% c("UNOC", "RDSQ"))]
+occupancy.freq.birds.150<-prop.table(occupancy)[!(names(occupancy) %in% c("UNOC", "RDSQ"))]
 occupancy.freq.birds.150
 
 
   #total occupancy frequency w/o UNOC or RDSQ
-total.occupancy.freq<-sum(prop.table(occupancy.table)[1:4])
-total.occupancy.freq<-total.occupancy/length(boxes$box)
+total.occupancy.freq<-sum(prop.table(occupancy)[1:4])
+total.occupancy.freq<-occupancy.total/length(boxes$box)
 total.occupancy.freq
 
 
   #unoccupied box frequency; total RDSQ and UNOC occupancy frequencies
-unoccupied<-sum(prop.table(occupancy.table)[c("UNOC", "RDSQ")])
+unoccupied<-sum(prop.table(occupancy)[c("UNOC", "RDSQ")])
 unoccupied
 
   #occupancy freq by sp w/ RDSQ (prop occupied boxes)
@@ -148,6 +148,7 @@ total.uncap
   #uncaptured hens frequencies by sp (prop of each sp occupancy)
 uncap.freq<-uncap/occupancy.birds
 uncap.freq<- uncap/occupancy.birds[c("COGO", "COME")]
+uncap.freq<- uncap/(occupancy.birds)
 uncap.freq
 
 
@@ -199,7 +200,7 @@ missed<-table(boxes$sp1[boxes$outcome=="missed"])
 missed
 
   #missed frequency only
-missed.freq<-outcome.freq["missed"]
+missed.freq<-outcome.freq.sp["missed",]
 missed.freq
 
   #missed frequencies by sp
@@ -216,7 +217,7 @@ dump<-table(boxes$sp1[boxes$outcome=="dump"])
 dump
 
   #dump frequency only
-dump.freq<-outcome.freq["dump"]
+dump.freq<-outcome.freq.sp["dump",]
 dump.freq
 
   #dump frequencies by sp
@@ -233,7 +234,7 @@ n.abandon<-table(boxes$sp1[boxes$outcome=="n-abandon"])
 n.abandon
 
   #n-abandon frequency only
-n.abandon.freq<-outcome.freq["n-abandon"]
+n.abandon.freq<-outcome.freq.sp["n-abandon",]
 n.abandon.freq
 
   #n-abandon frequencies by sp
@@ -250,7 +251,7 @@ r.abandon<-table(boxes$sp1[boxes$outcome=="r-abandon"])
 r.abandon
 
   #r-abandon frequency only
-r.abandon.freq<-outcome.freq["r-abandon"]
+r.abandon.freq<-outcome.freq.sp["r-abandon",]
 r.abandon.freq
 
   #r-abandon frequencies by sp
@@ -266,7 +267,7 @@ u.abandon<-table(boxes$sp1[boxes$outcome=="u-abandon"])
 u.abandon
 
   #u-abandon frequency only
-u.abandon.freq<-outcome.freq["u-abandon"]
+u.abandon.freq<-outcome.freq.sp["u-abandon",]
 u.abandon.freq
 
   #u-abandon frequencies by sp
@@ -283,11 +284,11 @@ unknown.total<- length(boxes$outcome[boxes$outcome=="unknown"])
 unknown.total
 
   #unknown counts by sp
-unknown<-table(boxes$sp1[boxes$outcome=="dunknown"])
+unknown<-table(boxes$sp1[boxes$outcome=="unknown"])
 unknown
 
   #unknown frequency only
-unknown.freq<-outcome.freq["unknown"]
+unknown.freq<-outcome.freq.sp["unknown",]
 unknown.freq
 
   #unknown frequencies by sp
@@ -404,3 +405,4 @@ marked.sp
   #frequency of marked ducklings
 marked.freq<-marked.sp/hatched.sp
 marked.freq
+
