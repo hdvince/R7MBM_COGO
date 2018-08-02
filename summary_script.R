@@ -319,11 +319,11 @@ for (c in 1:length(init$sp)){
 
 init
 
-  #incubation stats by sp
+  #incubation stats by COGO & BUFF 
 a.initiation2<-data.frame(
-  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"], 
-  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"],
-  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"])
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"])
 a.initiation2
 
 a.initiation2$adj.date=a.initiation2$date-28
@@ -345,6 +345,34 @@ for (g in 1:length(incub$sp)){
 }
 
 incub
+
+#incubation stats by COME
+a.initiation3<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="COME"])
+a.initiation3
+
+a.initiation3$adj.date=a.initiation3$date-32
+head(a.initiation3)
+
+a.initiation3
+
+incub.COME<-data.frame(sp=unique(a.initiation3$sp), early=0, late=0, range=0, mean=0)
+incub.COME
+
+
+for (g in 1:length(incub.COME$sp)){ 
+  date.list=a.initiation3$adj.date[a.initiation3$sp==incub.COME$sp[g]]
+  incub.COME$early[g]=date.list[which.min(date.list)]
+  incub.COME$late[g]=date.list[which.max(date.list)]
+  incub.COME$range[g]=incub.COME$late[g]-incub.COME$early[g]
+  incub.COME$mean[g]=mean(date.list)
+  
+}
+
+incub.COME
+
 
   #hatch date stats by sp
 hatch<-data.frame(sp=unique(a.initiation$sp), early=0, late=0, range=0, mean=0 )
