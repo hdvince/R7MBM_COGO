@@ -110,7 +110,7 @@ box,site,sp1,sp2,sp3,band,recap,new,plast,webtag,outcome
 109,2,BUFF,,,635-00457,0,1,,,r-abandon
 110,2,UNOC,,,,,,,,unoccupied
 111,1,COGO,BUFF,,1106-02891,1,0,,,marked
-112,19,COGO,,,1106-02955,1,0,,,n-abandon
+112,19,COGO,,,1106-02955,1,0,,,r-abandon
 113,3,UNOC,,,,,,,,unoccupied
 114,3,COGO,,,1106-02904,1,0,,,marked
 115,3,UNOC,,,,,,,,unoccupied
