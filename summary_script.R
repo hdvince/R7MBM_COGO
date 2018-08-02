@@ -11,9 +11,10 @@ visits<-read.csv("R_2018_COGO_Box_Checks.csv", header=T, stringsAsFactors = F)
 visits<-visits[ ,1:13]
 
 boxes<-read.csv("R_2018_COGO_Box_Inventory.csv", header=T, stringsAsFactors = F)
+boxes<-boxes[ ,1:11]
 
 eggs<-read.csv("R_2018_COGO_Egg_Fate.csv", header=T, stringsAsFactors = F)
-eggs<-eggs[,1:7]
+eggs<-eggs[,1:8]
 
 #omit one sp
   #[boxes$sp1 != "UNOC"]
