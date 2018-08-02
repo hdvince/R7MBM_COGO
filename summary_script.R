@@ -281,7 +281,7 @@ unknown
 #EGG-LAYING & INCUBATION
 
 
-  #nest initiation date stats by species
+  #nest initiation date stats by sp
 
 a.initiation<-data.frame(
   sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"], 
@@ -319,6 +319,44 @@ for (c in 1:length(init$sp)){
 
 init
 
+#nest initiation date stats by sp
+
+a.initiationC<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"],
+  eggs=0,
+  adj.eggs=0)
+a.initiationC
+
+for (b in 1:length(a.initiationC$box)) {
+  egg.list=visits$sp1eggs[visits$box == a.initiationC$box[b]]
+  a.initiationC$eggs[b]=egg.list[which.max(egg.list)]
+  a.initiationC$adj.eggs[b]=a.initiationC$eggs[b] 
+  if(a.initiationC$adj.eggs[b]>8){a.initiationC$adj.eggs[b]=8}
+}
+
+a.initiationC$adj.date=a.initiationC$date-32
+a.initiationC$init.date=a.initiationC$adj.date-(a.initiationC$adj.eggs*2)
+head(a.initiationC)
+
+a.initiationC
+
+init.COME<-data.frame(sp=unique(a.initiationC$sp), early=0, late=0, range=0, mean=0)
+init.COME
+
+for (c in 1:length(init$sp)){ 
+  
+  date.list=a.initiationC$init.date[a.initiationC$sp==init.COME$sp[c]]
+  init.COME$early[c]=date.list[which.min(date.list)]
+  init.COME$late[c]=date.list[which.max(date.list)]
+  init.COME$range[c]=init.COME$late[c]-init.COME$early[c]
+  init.COME$mean[c]=mean(date.list)
+  
+}
+
+init.COME
+
   #incubation stats by COGO & BUFF 
 a.initiation2<-data.frame(
   sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"], 
@@ -349,8 +387,8 @@ incub
 #incubation stats by COME
 a.initiation3<-data.frame(
   sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"], 
-  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="COME"],
-  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="COME"])
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"])
 a.initiation3
 
 a.initiation3$adj.date=a.initiation3$date-32
