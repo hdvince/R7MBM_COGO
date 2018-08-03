@@ -416,6 +416,8 @@ incub.COME
 hatch<-data.frame(sp=unique(a.initiation$sp), early=0, late=0, range=0, mean=0 )
 hatch
 
+
+
 for (c in 1:length(hatch$sp)){ 
   
   date.list=a.initiation$date[a.initiation$sp==hatch$sp[c]]
@@ -427,14 +429,38 @@ for (c in 1:length(hatch$sp)){
 hatch
 
   #clutch by sp
-clutch<-data.frame(sp=unique(a.initiation$sp), small=0, large=0, range=0, mean=0)
+clutch<-data.frame(sp=unique(eggs$sp[!(visits$sp1 %in% c("UNOC", "RDSQ"))]), small=0, large=0, range=0, mean=0)
+clutch
 
+a.clutch<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1], 
+  date=visits$date[visits$fate==1 & visits$hatched==1],
+  box=visits$box[visits$fate==1 & visits$hatched==1],
+  sp1eggs=0,
+  sp2eggs=0,
+  sp3eggs=0,
+  totaleggs=0)
+
+a.clutch
+
+for (b in 1:length(a.clutch$box)) {
+  egg.list=visits$sp1eggs[visits$box == a.clutch$box[b]]
+  a.clutch$sp1eggs[b]=egg.list[which.max(egg.list)]
+  egg.list2=visits$sp2eggs[visits$box == a.clutch$box[b]]
+  a.clutch$sp2eggs[b]=egg.list2[which.max(egg.list2)]
+  if (is.na(a.clutch$sp2eggs[b])){a.clutch$sp2eggs==0}
+  egg.list3=visits$sp3eggs[visits$box == a.clutch$box[b]]
+  a.clutch$sp3eggs[b]=egg.list2[which.max(egg.list3)]
+  if (is.na(a.clutch$sp3eggs[b])){a.clutch$sp3eggs==0}
+  totaleggs= sum(a.clutch$sp1eggs[b]+a.clutch$sp2eggs[b]+a.clutch$sp3eggs[b])
+}
+a.clutch
 
 for (k in 1:length(clutch$sp)){
-  clutch$small[k]=min(a.initiation$eggs[a.initiation$sp==clutch$sp[k]]) 
-  clutch$large[k]=max(a.initiation$eggs[a.initiation$sp==clutch$sp[k]]) 
+  clutch$small[k]=min(a.initiation4$eggs[a.initiation4$sp==clutch$sp[k]]) 
+  clutch$large[k]=max(a.initiation4$eggs[a.initiation4$sp==clutch$sp[k]]) 
   clutch$range[k]=clutch$large[k]-clutch$small[k]
-  clutch$mean[k]=mean(a.initiation$eggs[a.initiation$sp==clutch$sp[k]])
+  clutch$mean[k]=mean(a.initiation4$eggs[a.initiation4$sp==clutch$sp[k]])
 }
 
 clutch
@@ -489,3 +515,7 @@ marked.sp
 marked.freq<-marked.sp/hatched.sp
 marked.freq
 
+
+
+
+#
