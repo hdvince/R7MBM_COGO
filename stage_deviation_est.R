@@ -2,35 +2,37 @@
 #Created by Hannah Vincelette & Chuck Frost
 
 
-stage=visits
+accuracy=visits
 
 
-for (b in 1:length(stage$stage)){
-if(is.na(stage$stage[b]) & stage$hatched[b]==1){stage$stage[b]=28}
+for (b in 1:length(accuracy$stage)){
+if(is.na(accuracy$stage[b])){accuracy$stage[b]=0}
 }
 
 
-stage<-stage[stage$stage>0,]
-stage=stage[!is.na(stage$box),]
+accuracy<-accuracy[accuracy$stage>0,]
+accuracy=accuracy[!is.na(accuracy$box),]
 
-stage<-stage[stage$sp1=="COGO" | stage$sp1=="BUFF", ]
+accuracy<-accuracy[accuracy$sp1=="COGO" | accuracy$sp1=="BUFF", ]
 
-stage$hdate=NA
-stage$pdate=NA
+accuracy$hdate=NA
+accuracy$pdate=NA
 
 
-hatchers=unique(stage$box[stage$hatched==1])
+hatchers=unique(accuracy$box[accuracy$hatched==1])
 
-stage=stage[stage$box %in% hatchers,]
+accuracy=accuracy[accuracy$box %in% hatchers,]
 
-for (a in 1:length(stage$stage)) {
+for (a in 1:length(accuracy$stage)) {
 
-  stage$hdate[a]=stage$date[stage$hatched==1 & stage$box==stage$box[a]]
+  accuracy$hdate[a]=accuracy$date[accuracy$hatched==1 & accuracy$box==accuracy$box[a]]
   
-  stage$pdate[a]=(28-stage$stage[a])+stage$date[a]
+  accuracy$pdate[a]=(28-accuracy$stage[a])+accuracy$date[a]
   
 }
 
-stage$diff=stage$pdate-stage$hdate
+accuracy$diff=accuracy$pdate-accuracy$hdate
 
+plot(accuracy$stage, accuracy$diff)
+plot(accuracy$date, accuracy$diff)
 
