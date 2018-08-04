@@ -8,13 +8,19 @@
 #read in the most current data file
 
 visits<-read.csv("R_2018_COGO_Box_Checks.csv", header=T, stringsAsFactors = F)
-visits<-visits[ ,1:13]
+visits<-visits[ ,1:14]
+visits<-visits[visits$sp1 != "UNAV",]
 
 boxes<-read.csv("R_2018_COGO_Box_Inventory.csv", header=T, stringsAsFactors = F)
 boxes<-boxes[ ,1:11]
+boxes<-boxes[boxes$sp1 != "UNAV",]
 
 eggs<-read.csv("R_2018_COGO_Egg_Fate.csv", header=T, stringsAsFactors = F)
 eggs<-eggs[,1:8]
+eggs<-eggs[eggs$sp != "UNAV",]
+
+
+
 
 #omit one sp
   #[boxes$sp1 != "UNOC"]
@@ -429,41 +435,47 @@ for (c in 1:length(hatch$sp)){
 hatch
 
   #clutch by sp
-clutch<-data.frame(sp=unique(eggs$sp[!(visits$sp1 %in% c("UNOC", "RDSQ"))]), small=0, large=0, range=0, mean=0)
+clutch<-data.frame(sp=unique(eggs$sp[!(eggs$sp %in% c("UNOC", "RDSQ"))]), small=0, large=0, range=0, mean=0, stringsAsFactors = F)
 clutch
 
+clutch.tot<-data.frame(sp=unique(eggs$sp[!(eggs$sp %in% c("UNOC", "RDSQ"))]), small=0, large=0, range=0, mean=0, stringsAsFactors = F)
+clutch.tot
+
 a.clutch<-data.frame(
-  sp=visits$sp1[visits$fate==1 & visits$hatched==1], 
-  date=visits$date[visits$fate==1 & visits$hatched==1],
-  box=visits$box[visits$fate==1 & visits$hatched==1],
-  sp1eggs=0,
-  sp2eggs=0,
-  sp3eggs=0,
-  totaleggs=0)
+  sp=visits$sp1[boxes$outcome=="missed"|boxes$outcome=="marked"|boxes$outcome=="n-abandon"|boxes$outcome=="r-abandon"|boxes$outcome=="u-abandon"], 
+  date=visits$date[boxes$outcome=="missed"|boxes$outcome=="marked"|boxes$outcome=="n-abandon"|boxes$outcome=="r-abandon"|boxes$outcome=="u-abandon"],
+  box=visits$box[boxes$outcome=="missed"|boxes$outcome=="marked"|boxes$outcome=="n-abandon"|boxes$outcome=="r-abandon"|boxes$outcome=="u-abandon"],
+  primaryeggs=0,
+  secondaryeggs=0,
+  totaleggs=0, stringsAsFactors = F)
 
 a.clutch
 
 for (b in 1:length(a.clutch$box)) {
-  egg.list=visits$sp1eggs[visits$box == a.clutch$box[b]]
-  a.clutch$sp1eggs[b]=egg.list[which.max(egg.list)]
-  egg.list2=visits$sp2eggs[visits$box == a.clutch$box[b]]
-  a.clutch$sp2eggs[b]=egg.list2[which.max(egg.list2)]
-  if (is.na(a.clutch$sp2eggs[b])){a.clutch$sp2eggs==0}
-  egg.list3=visits$sp3eggs[visits$box == a.clutch$box[b]]
-  a.clutch$sp3eggs[b]=egg.list2[which.max(egg.list3)]
-  if (is.na(a.clutch$sp3eggs[b])){a.clutch$sp3eggs==0}
-  totaleggs= sum(a.clutch$sp1eggs[b]+a.clutch$sp2eggs[b]+a.clutch$sp3eggs[b])
+  a.clutch$primaryeggs[b]=length(eggs$eggnum[a.clutch$sp[b]==eggs$sp & eggs$box==a.clutch$box[b]])
+  a.clutch$secondaryeggs[b]=length(eggs$eggnum[a.clutch$box[b]==eggs$box])-a.clutch$primaryeggs[b]
+  a.clutch$totaleggs[b]=a.clutch$primaryeggs[b] + a.clutch$secondaryeggs[b]
+  
 }
 a.clutch
 
 for (k in 1:length(clutch$sp)){
-  clutch$small[k]=min(a.initiation4$eggs[a.initiation4$sp==clutch$sp[k]]) 
-  clutch$large[k]=max(a.initiation4$eggs[a.initiation4$sp==clutch$sp[k]]) 
+  clutch$small[k]=min(a.clutch$primaryeggs[a.clutch$sp==clutch$sp[k]]) 
+  clutch$large[k]=max(a.clutch$primaryeggs[a.clutch$sp==clutch$sp[k]]) 
   clutch$range[k]=clutch$large[k]-clutch$small[k]
-  clutch$mean[k]=mean(a.initiation4$eggs[a.initiation4$sp==clutch$sp[k]])
+  clutch$mean[k]=mean(a.clutch$primaryeggs[a.clutch$sp==clutch$sp[k]])
 }
 
 clutch
+
+for (k in 1:length(clutch.tot$sp)){
+  clutch.tot$small[k]=min(a.clutch$totaleggs[a.clutch$sp==clutch$sp[k]]) 
+  clutch.tot$large[k]=max(a.clutch$totaleggs[a.clutch$sp==clutch$sp[k]]) 
+  clutch.tot$range[k]=clutch.tot$large[k]-clutch.tot$small[k]
+  clutch.tot$mean[k]=mean(a.clutch$totaleggs[a.clutch$sp==clutch$sp[k]])
+}
+
+clutch.tot
 
 
 #count nests with other sp dump eggs (by sp)
