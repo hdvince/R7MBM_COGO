@@ -287,7 +287,7 @@ unknown
 #EGG-LAYING & INCUBATION
 
 
-  #nest initiation date stats by sp
+  #nest initiation date stats COGO & BUFF
 
 a.initiation<-data.frame(
   sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"], 
@@ -325,7 +325,7 @@ for (c in 1:length(init$sp)){
 
 init
 
-#nest initiation date stats by sp
+#nest initiation date stats by COME
 
 a.initiationC<-data.frame(
   sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"], 
@@ -434,7 +434,8 @@ for (c in 1:length(hatch$sp)){
 }
 hatch
 
-  #clutch by sp
+  
+#clutch by sp 
 clutch<-data.frame(sp=unique(eggs$sp[!(eggs$sp %in% c("UNOC", "RDSQ"))]), small=0, large=0, range=0, mean=0, stringsAsFactors = F)
 clutch
 
@@ -442,9 +443,10 @@ clutch.tot<-data.frame(sp=unique(eggs$sp[!(eggs$sp %in% c("UNOC", "RDSQ"))]), sm
 clutch.tot
 
 a.clutch<-data.frame(
-  sp=visits$sp1[boxes$outcome=="missed"|boxes$outcome=="marked"|boxes$outcome=="n-abandon"|boxes$outcome=="r-abandon"|boxes$outcome=="u-abandon"], 
-  date=visits$date[boxes$outcome=="missed"|boxes$outcome=="marked"|boxes$outcome=="n-abandon"|boxes$outcome=="r-abandon"|boxes$outcome=="u-abandon"],
-  box=visits$box[boxes$outcome=="missed"|boxes$outcome=="marked"|boxes$outcome=="n-abandon"|boxes$outcome=="r-abandon"|boxes$outcome=="u-abandon"],
+  sp=visits$sp1, 
+  date=visits$date,
+  box=visits$box,
+  outcome=0,
   primaryeggs=0,
   secondaryeggs=0,
   totaleggs=0, stringsAsFactors = F)
@@ -452,11 +454,14 @@ a.clutch<-data.frame(
 a.clutch
 
 for (b in 1:length(a.clutch$box)) {
+  a.clutch$outcome[b]=boxes$outcome[a.clutch$box[b]==boxes$box]
   a.clutch$primaryeggs[b]=length(eggs$eggnum[a.clutch$sp[b]==eggs$sp & eggs$box==a.clutch$box[b]])
   a.clutch$secondaryeggs[b]=length(eggs$eggnum[a.clutch$box[b]==eggs$box])-a.clutch$primaryeggs[b]
   a.clutch$totaleggs[b]=a.clutch$primaryeggs[b] + a.clutch$secondaryeggs[b]
   
 }
+a.clutch
+a.clutch<-a.clutch[a.clutch$outcome!="dump",]
 a.clutch
 
 for (k in 1:length(clutch$sp)){
@@ -476,6 +481,7 @@ for (k in 1:length(clutch.tot$sp)){
 }
 
 clutch.tot
+
 
 
 #count nests with other sp dump eggs (by sp)

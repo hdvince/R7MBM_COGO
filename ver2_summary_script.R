@@ -32,7 +32,7 @@ eggs<-eggs[eggs$sp != "UNAV",]
 
 #OCCUPANCY
 
-# occupancy by sp
+# occupancy by sp (defined by laying an egg)
 occupancy<-table(boxes$sp1)
 occupancy
 
@@ -59,8 +59,53 @@ incub.hen
 
 incub.hen<-table(incub.hen$sp)
 
-incub.hen.freq<-incub.hen/occupancy[c("BUFF", "COGO", "COME")]
+incub.hen.freq<-incub.hen/occupancy[names(occupancy) %in% names(incub.hen)]
 incub.hen.freq
+
+# number boxes with squirrel kittens
+squirrels<- length(boxes$sp1[boxes$sp1=="RDSQ"])
+
+# number of boxes unavailable during first sweep
+unavailable<- length(visits$visit[visits$visit==1 & visits$sp1=="UNAV"])
+unavailable
+
+
+# sp combos occupying boxes (defined by laying an egg)
+# omits boxes with 3 sp
+# will not account for AMKE & OTHER species
+
+a.combo<-data.frame(
+  box=boxes$box[boxes$sp1 != "UNOC" & boxes$sp1 != "RDSQ"],
+  sp1=boxes$sp1[boxes$sp1 != "UNOC" & boxes$sp1 != "RDSQ"],
+  sp2=boxes$sp2[boxes$sp1 != "UNOC" & boxes$sp1 != "RDSQ"],
+  sp3=boxes$sp3[boxes$sp1 != "UNOC" & boxes$sp1 != "RDSQ"]
+)
+a.combo
+
+
+combos<-data.frame(
+  COGO=length(a.combo$sp1[a.combo$sp1=="COGO" & a.combo$sp2==""]),
+  BUFF=length(a.combo$sp1[a.combo$sp1=="BUFF" & a.combo$sp2==""]),
+  COME=length(a.combo$sp1[a.combo$sp1=="COME" & a.combo$sp2==""]),
+  BOOW=length(a.combo$sp1[a.combo$sp1=="BOOW" & a.combo$sp2==""]),
+  COGO.BUFF=length(a.combo$sp1[(a.combo$sp1=="COGO" | a.combo$sp1=="BUFF") & (a.combo$sp2=="COGO"| a.combo$sp2=="BUFF")]),
+  COGO.COME=length(a.combo$sp1[(a.combo$sp1=="COGO"| a.combo$sp1=="COME") & (a.combo$sp2=="COGO"|a.combo$sp2=="COME")]),
+  COGO.BOOW=length(a.combo$sp1[(a.combo$sp1=="COGO"|a.combo$sp1=="BOOW") & (a.combo$sp2=="COGO"|a.combo$sp2=="BOOW")]), 
+  BUFF.BOOW=length(a.combo$sp1[(a.combo$sp1=="BUFF"|a.combo$sp1=="BOOW") & (a.combo$sp2=="BUFF"|a.combo$sp2=="BOOW")]), 
+  COME.BOOW=length(a.combo$sp1[(a.combo$sp1=="COME"|a.combo$sp1=="BOOW") & (a.combo$sp2=="COME" | a.combo$sp2=="BOOW")]), 
+  COME.BUFF=length(a.combo$sp1[(a.combo$sp1=="BUFF"|a.combo$sp1=="BOOW") & (a.combo$sp2=="COME"|a.combo$sp2=="BUFF")])
+  
+)
+combos
+  
+
+
+for (l in 1:length(a.combo$box)) {
+  
+  if (is.na(a.incub$stage[g])){a.incub$stage[g]=0}
+  
+}
+
 
 #EGGS
 
@@ -116,11 +161,189 @@ clutch.tot
 clutch
 clutch.tot
 
+# number boxes with mixed sp eggs 
+# doesn't take into account if sp1 hen switches
+boxes.sp2eggs<-length(boxes$sp2[boxes$sp2 !=""])
+boxes.sp3eggs<-length(boxes$sp3[boxes$sp3 != ""])
+boxes.o.eggs<-sum(boxes.sp2eggs + boxes.sp3eggs)
+boxes.o.eggs
+
+# number of eggs predated (an egg went missing)
+# does not count ducklings found dead (documented in excel sheet as hatched, unmarked egg)
+# does not include owls
+predation.eggs<-length(eggs$box[is.na(eggs$hatched) & !(eggs$sp %in% c("BOOW", "UNOC", "RDSQ"))])
+predation.eggs
+
+# number of eggs predated over time
+# not calculated; need dates of individual egg predation
+
+# number of boxes predated by box initiation date
+# not calculated; only have initiation dates for marked boxes (with known JD hatch) and most predated boxes are not marked
+
+# number of boxes predated (an egg went missing)
+# does not count ducklings found dead (documented in excel sheet as hatched, unmarked egg)
+predation.boxes<-unique(eggs$box[is.na(eggs$hatched)])
+predation.boxes<-length(predation.boxes)
+predation.boxes
+
+
+#NESTING (init, incub, hatch)
+
+#nest initiation COGO & BUFF (min, max, range, mean)
+
+a.initiation<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"],
+  eggs=0,
+  adj.eggs=0)
+a.initiation
+
+for (b in 1:length(a.initiation$box)) {
+  egg.list=visits$sp1eggs[visits$box == a.initiation$box[b]]
+  a.initiation$eggs[b]=egg.list[which.max(egg.list)]
+  a.initiation$adj.eggs[b]=a.initiation$eggs[b] 
+  if(a.initiation$adj.eggs[b]>8){a.initiation$adj.eggs[b]=8}
+}
+
+a.initiation$adj.date=a.initiation$date-28
+a.initiation$init.date=a.initiation$adj.date-(a.initiation$adj.eggs*2)
+
+a.initiation
+
+init<-data.frame(sp=unique(a.initiation$sp), early=0, late=0, range=0, mean=0)
+init
+
+for (c in 1:length(init$sp)){ 
+  
+  date.list=a.initiation$init.date[a.initiation$sp==init$sp[c]]
+  init$early[c]=date.list[which.min(date.list)]
+  init$late[c]=date.list[which.max(date.list)]
+  init$range[c]=init$late[c]-init$early[c]
+  init$mean[c]=mean(date.list)
+  
+}
+
+init
+
+
+#nest initiation COME (min, max, range, mean)
+
+a.initiationC<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"],
+  eggs=0,
+  adj.eggs=0)
+a.initiationC
+
+for (b in 1:length(a.initiationC$box)) {
+  egg.list=visits$sp1eggs[visits$box == a.initiationC$box[b]]
+  a.initiationC$eggs[b]=egg.list[which.max(egg.list)]
+  a.initiationC$adj.eggs[b]=a.initiationC$eggs[b] 
+  if(a.initiationC$adj.eggs[b]>8){a.initiationC$adj.eggs[b]=8}
+}
+a.initiationC
+
+a.initiationC$adj.date=a.initiationC$date-32
+a.initiationC$init.date=a.initiationC$adj.date-(a.initiationC$adj.eggs*2)
+
+a.initiationC
+
+init.COME<-data.frame(sp=unique(a.initiationC$sp), early=0, late=0, range=0, mean=0)
+init.COME
+
+for (c in 1:length(init$sp)){ 
+  
+  date.list=a.initiationC$init.date[a.initiationC$sp==init.COME$sp[c]]
+  init.COME$early[c]=date.list[which.min(date.list)]
+  init.COME$late[c]=date.list[which.max(date.list)]
+  init.COME$range[c]=init.COME$late[c]-init.COME$early[c]
+  init.COME$mean[c]=mean(date.list)
+  
+}
+
+init.COME
+
+
+
+#incubation COGO & BUFF (min, max, range, mean)
+a.initiation2<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"& visits$sp1!="COME"])
+a.initiation2
+
+a.initiation2$adj.date=a.initiation2$date-28
+head(a.initiation2)
+
+a.initiation2
+
+incub<-data.frame(sp=unique(a.initiation2$sp), early=0, late=0, range=0, mean=0)
+incub
+
+
+for (g in 1:length(incub$sp)){ 
+  date.list=a.initiation2$adj.date[a.initiation2$sp==incub$sp[g]]
+  incub$early[g]=date.list[which.min(date.list)]
+  incub$late[g]=date.list[which.max(date.list)]
+  incub$range[g]=incub$late[g]-incub$early[g]
+  incub$mean[g]=mean(date.list)
+  
+}
+
+incub
+
+#incubation COME (min, max, range, mean)
+a.initiation3<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1=="COME"])
+a.initiation3
+
+a.initiation3$adj.date=a.initiation3$date-32
+head(a.initiation3)
+
+a.initiation3
+
+incub.COME<-data.frame(sp=unique(a.initiation3$sp), early=0, late=0, range=0, mean=0)
+incub.COME
+
+
+for (g in 1:length(incub.COME$sp)){ 
+  date.list=a.initiation3$adj.date[a.initiation3$sp==incub.COME$sp[g]]
+  incub.COME$early[g]=date.list[which.min(date.list)]
+  incub.COME$late[g]=date.list[which.max(date.list)]
+  incub.COME$range[g]=incub.COME$late[g]-incub.COME$early[g]
+  incub.COME$mean[g]=mean(date.list)
+  
+}
+
+incub.COME
+
+
+#hatch date by sp (min, max, range, mean)
+hatch<-data.frame(sp=unique(a.initiation$sp), early=0, late=0, range=0, mean=0 )
+hatch
+
+
+
+for (c in 1:length(hatch$sp)){ 
+  
+  date.list=a.initiation$date[a.initiation$sp==hatch$sp[c]]
+  hatch$early[c]=date.list[which.min(date.list)]
+  hatch$late[c]=date.list[which.max(date.list)]
+  hatch$range[c]=hatch$late[c]-hatch$early[c]
+  hatch$mean[c]=mean(date.list)
+}
+hatch
+
+
 
 
 #NEST SUCCESS
 
-# outcomes by sp
+# outcomes by sp (number and freq)
 outcome.sp<-table(boxes$outcome, boxes$sp1)
 outcome.sp
 
@@ -140,11 +363,158 @@ outcome.freq<-reshape(outcome.sp.df[,c("sp", "outcome", "pct")], idvar="outcome"
 names(outcome.freq)<-c("outcome", as.character(unique(outcome.sp.df$sp)))
 outcome.freq
 
+# hatched boxes by sp (number and freq)
+hatched<-table(boxes$sp1[boxes$outcome=="missed" | boxes$outcome=="marked"])
+hatched
+
+freq.hatched<- hatched/occupancy[names(occupancy) %in% names(hatched)]
+freq.hatched
+
+# hatched boxes over time
+# only considers marked COGO, BUFF, & COME boxes
+
+hatched.time<- data.frame(
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1 != "BOOW"],
+  hatch.day=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1 != "BOOW"]
+)
+
+
+hatched.time
+aggregate(hatched.time$hatch.day~hatched.time$box, FUN=min)
+
+hatched.time
+
+hatch.days<-hatched.time$hatch.day
+hatch.days<-table(hatch.days)
+hatch.days
+plot(hatch.days)
+
+
+
+# number hatched COGO boxes by # eggs
+
+b.clutch<-data.frame(
+  sp=visits$sp1[visits$sp1=="COGO"], 
+  date=visits$date[visits$sp1=="COGO"],
+  box=visits$box[visits$sp1=="COGO"],
+  primaryeggs=0,
+  secondaryeggs=0,
+  totaleggs=0, stringsAsFactors = F)
+
+b.clutch
+
+for (b in 1:length(b.clutch$box)) {
+  b.clutch$primaryeggs[b]=length(eggs$eggnum[b.clutch$sp[b]==eggs$sp & b.clutch$box[b]==eggs$box])
+  b.clutch$secondaryeggs[b]=length(eggs$eggnum[b.clutch$box[b]==eggs$box])-b.clutch$primaryeggs[b]
+  b.clutch$totaleggs[b]=b.clutch$primaryeggs[b] + b.clutch$secondaryeggs[b]
+  
+}
+b.clutch
+
+
+c.clutch<-data.frame(
+  box=boxes$box[boxes$sp1=="COGO"],
+  outcome=0,
+  sp.clutch=0,
+  total.clutch=0
+  
+)
+
+
+
+for (m in 1:length(c.clutch$box)){
+  c.clutch$outcome[m]=boxes$outcome[c.clutch$box[m]==boxes$box]
+  c.clutch$sp.clutch[m]=max(b.clutch$primaryeggs[b.clutch$box==c.clutch$box[m]]) 
+  c.clutch$total.clutch[m]=max(b.clutch$totaleggs[b.clutch$box==c.clutch$box[m]]) 
+}
+
+
+####to remove rows
+c.clutch<-c.clutch[c.clutch$outcome == "missed"|c.clutch$outcome=="marked",]
+
+c.clutch
+
+sp.clutch.tab<-table(c.clutch$sp.clutch)
+total.clutch.tab<-table(c.clutch$total.clutch)
+
+sp.clutch.tab
+total.clutch.tab
+
+plot(sp.clutch.tab, ylab="number hatches", xlab ="sp clutch size")
+plot(total.clutch.tab, ylab= "number hatches", xlab ="total clutch size")
+
+
+# hatched COGO boxes by init date 
+
+a.initiation<-data.frame(
+  sp=visits$sp1[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"], 
+  date=visits$date[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"],
+  box=visits$box[visits$fate==1 & visits$hatched==1 & visits$sp1!="BOOW"],
+  outcome=0,
+  eggs=0,
+  adj.eggs=0)
+a.initiation
+
+for (b in 1:length(a.initiation$box)) {
+  a.initiation$outcome[b]=boxes$outcome[a.initiation$box[b]==boxes$box]
+  egg.list=visits$sp1eggs[visits$box == a.initiation$box[b]]
+  a.initiation$eggs[b]=egg.list[which.max(egg.list)]
+  a.initiation$adj.eggs[b]=a.initiation$eggs[b] 
+  if(a.initiation$adj.eggs[b]>8){a.initiation$adj.eggs[b]=8}
+
+}
+
+a.initiation
+a.initiation$adj.date=a.initiation$date-28
+a.initiation$init.date=a.initiation$adj.date-(a.initiation$adj.eggs*2)
+
+a.initiation
+
+init.hatch.COGO<-a.initiation[a.initiation$sp=="COGO",]
+init.hatch
+
+init.hatch.COGO<-table(init.hatch$init.date)
+init.hatch.COGO
+plot(init.hatch.COGO, xlab="initiation date", ylab="number hatched boxes")
+
+
+
 #EGG SUCCESS
+
+# number and freq COGO eggs hatched in COGO boxes
+a.COGO.eggs<-data.frame(
+  box=eggs$box[eggs$hatched==1 & eggs$sp=="COGO"],
+  sp1=0
+)
+
+for (t in 1:length(a.COGO.eggs$box)){
+  a.COGO.eggs$sp1[t]=boxes$sp1[a.COGO.eggs$box[t]==boxes$box]
+  
+}
+
+COGO.eggs<-table(a.COGO.eggs$sp1)
+prop.table(COGO.eggs)
+
+# hatched eggs by sp
+hatched.sp<-table(eggs$sp[eggs$hatched==1])
+hatched.sp
+
+all.eggs<-table(eggs$sp[!(eggs$sp %in% c("UNOC", "RDSQ"))])
+all.eggs
+hatched.freq<- hatched.sp/all.eggs
+hatched.freq
+
+
+
+#HATCHLINGS
 
 # hatchlings marked by sp (1==marked)
 marked.sp<-table(eggs$sp[eggs$marked==1])
 marked.sp
+
+# freq hatchlings marked
+hatched.sp<-table(eggs$sp[eggs$hatched==1])
+marked.sp/hatched.sp[names(hatched.sp) %in% names(marked.sp)]
 
 
 
@@ -169,3 +539,20 @@ hen.status<-aggregate(cbind(recap, new,uncap)~sp, data=hen.df, FUN=sum)
 hen.status<-aggregate(cbind(recap,new,uncap)~sp, data=hen.df, FUN=sum, na.rm=T, na.action=na.pass)
 hen.status
 
+# number of hens with other markers, by sp
+hen.mark<-data.frame(
+  box=boxes$box[boxes$sp1 %in% c("COGO", "BUFF", "COME", "OTHER")],
+  sp=boxes$sp1[boxes$sp1 %in% c("COGO", "BUFF", "COME", "OTHER")],
+  webtag=boxes$webtag[boxes$sp1 %in% c("COGO", "BUFF", "COME", "OTHER")],
+  plast=boxes$plast[boxes$sp1 %in% c("COGO", "BUFF", "COME", "OTHER")], 
+ stringsAsFactors=T
+)
+hen.mark
+hen.mark<-hen.mark[hen.mark$webtag!="" | hen.mark$plast !="",]
+hen.mark
+
+for(d in 1:length(hen.mark)){
+  if(hen.mark$webtag[d]!=""){hen.mark$webtag[d]==1}
+  
+}
+hen.mark
