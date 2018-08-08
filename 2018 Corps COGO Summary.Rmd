@@ -1,0 +1,234 @@
+---
+title: "2018 COGO Summary Report"
+subtitle: "Chena River Flood Control Project"
+author: "Hannah Vincelette"
+date: "8/7/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+source('Corps_COGO_Sum_Script.R')
+```
+
+explanation to be added
+
+## Chena River State Recreation Area
+### OCCUPANCY
+
+#### Number of boxes unoccupied or occupied by squirrels 
+Squirrel occupancy defined by nest boxes with >= 1 squirrel kitten
+```{r occupancy1}
+o.occupancy
+```
+
+#### Number of boxes unavailable during the first sweep (i.e. squirrel nesting material present, box missing)
+Only considers boxes later made available
+
+```{r occupancy2}
+unavailable
+```
+
+#### Number of boxes in which a bird laid >= 1 egg (by species)
+```{r occupancy3}
+occupancy
+```
+
+
+#### Number of boxes in which a bird incubated >= 1 egg (by species)
+Only considers incubating COGO, BUFF, & COME boxes w/ stage>3 (no dump nests or early abandonment nests)
+Out of the total number of boxes in which a bird laid >= 1 egg 
+
+```{r occupancy4}
+incub.hen
+incub.hen.freq
+```
+
+#### Occupancy combinations 
+Based boxes in which a bird laid >= 1 egg
+Omits boxes with >2 species
+Will not account for AMKE & OTHER species
+
+```{r occupancy5}
+combos
+```
+
+### EGGS
+
+#### Total number eggs laid (by species)
+```{r eggs1}
+total.eggs
+```
+
+#### Species clutch stats (by species)
+Species clutch: number of eggs laid in a nest box of the same species as the primary, incubating hen
+Does not consider dump nests
+```{r eggs2}
+clutch
+```
+
+
+#### Total clutch size stats (by species)
+Total clutch: total number of eggs laid in a nest box (including all species)
+Does not consider dump nests
+```{r eggs3}
+clutch.tot
+```
+
+#### Number of boxes with >1 species of egg (by species)
+Does not take into account if sp1 hen switches throughout the season
+```{r eggs4}
+boxes.o.eggs
+```
+
+#### Number of eggs predated (all species)
+Eggs are assumed predated when they go missing (documented with an "NA"" in the hatched column)
+Does not count ducklings found dead (documented with hatched=1 abd marked=0)
+Does not consider owls
+
+```{r eggs5}
+predation.eggs
+```
+
+#### Number of boxes predated (all species)
+When >= 1 egg went missing
+Eggs are assumed predated when they go missing (documented with an "NA"" in the hatched column)
+Does not count ducklings found dead (documented with hatched=1 abd marked=0)
+Does not consider owls
+
+```{r eggs6}
+predation.boxes
+```
+
+###NESTING
+
+#### Nest initiation stats of COGO & BUFF
+Only considers marked boxes
+```{r nesting1}
+init
+```
+
+#### Nest initiation stats of COME
+Only considers marked boxes
+```{r nesting2}
+init.COME
+```
+
+#### Nest incubation stats of COGO & BUFF
+Only considers marked boxes
+```{r nesting3}
+incub
+```
+
+#### Nest incubation stats of COME
+Only considers marked boxes
+```{r nesting4}
+incub.COME
+```
+
+#### Hatch date stats (by species)
+Only considers marked boxes
+Does not consider BOOW
+```{r nesting5}
+hatch
+```
+
+### NEST SUCCESS
+
+#### Outcomes (by species)
+```{r nest.success1}
+outcome.sp
+```
+
+#### Outcome frequencies (by species)
+Out of the total number of boxes in which a bird laid >= 1 egg 
+```{r nest.success2}
+outcome.freq
+```
+
+#### Number of hatched boxes (by species)
+```{r nest.success3}
+hatched
+```
+
+#### Frequency of hatched boxes (by species)
+Out of the total number of boxes in which a bird laid >= 1 egg 
+```{r nest.success4}
+freq.hatched
+```
+
+#### Plot of hatched boxes over time (totals all species)
+Only considers marked COGO, BUFF, & COME boxes
+```{r nest.success5}
+print(plot(hatch.days))
+```
+
+#### Plot of COGO hatches vs species clutch size
+Species clutch: number of eggs laid in a nest box of the same species as the primary, incubating hen
+```{r nest.success6}
+print(plot(sp.clutch.tab, ylab="number hatches", xlab ="sp clutch size"))
+```
+
+#### Plot of COGO hatches vs total clutch size
+Total clutch: total number of eggs laid in a nest box (including all species)
+```{r nest.success7}
+print(plot(total.clutch.tab, ylab= "number hatches", xlab ="total clutch size"))
+```
+
+#### Plot of COGO hatches vs initatiation date
+Only considers marked boxes
+```{r nest.success8}
+print(plot(init.hatch.COGO, xlab="initiation date", ylab="number hatched boxes"))
+```
+
+### EGG SUCCESS
+#### Number of COGO eggs hatched in COGO, BUFF, & COME boxes
+```{r egg.success1}
+COGO.eggs
+```
+
+#### Frequency of COGO eggs hatched in COGO boxes
+Out of total number of COGO eggs hatched
+```{r egg.success2}
+COGO.eggs.prop
+```
+
+#### Number of hatched eggs (by species)
+```{r egg.success3}
+hatched.sp
+```
+
+#### Frequency of hatched eggs (by species)
+Out of total eggs laid by each species
+```{r egg.success4}
+hatched.freq
+```
+
+### HATCHLINGS
+
+#### Number of hatchlings marked (by species)
+```{r hatchling1}
+marked.sp
+```
+
+#### Frequency of hatchlings marked (by species)
+Out of total eggs hatched by each species
+```{r hatchling2}
+hatched.sp.freq
+```
+
+### HEN CAPTURE
+#### Hen status (by species)
+Out of total eggs hatched by each species
+```{r hen1}
+hen.status
+```
+
+#### Number of hens with other markers (by species)
+Out of total eggs hatched by each species
+```{r hen2}
+hen.mark
+```
+
+
