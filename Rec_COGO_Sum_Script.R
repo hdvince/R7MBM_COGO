@@ -55,37 +55,42 @@ o.occupancy =table(boxes$sp1[boxes$sp1 %in% c("UNOC", "RDSQ")])
 occupancy =table(boxes$sp1[!(boxes$sp1 %in% c("UNOC", "RDSQ"))])
 #occupancy
 
+
 # number incubating COGO, BUFF, & COME hens (boxes w/ stage>3)
 
 a.incub<-data.frame(
-  box=visits$box[visits$sp1 =="COGO"|visits$sp1 =="BUFF"|visits$sp1 =="COME"],
-  sp=visits$sp1[visits$sp1 =="COGO"|visits$sp1 =="BUFF"|visits$sp1 =="COME"],
-  stage=visits$stage[visits$sp1 =="COGO"|visits$sp1 =="BUFF"|visits$sp1 =="COME"]
+  box=visits$box[visits$sp1 =="COGO"|visits$sp1 =="BUFF"|visits$sp1 =="COME" ],
+  sp=visits$sp1[visits$sp1 =="COGO"|visits$sp1 =="BUFF"|visits$sp1 =="COME" ],
+  stage=visits$stage[visits$sp1 =="COGO"|visits$sp1 =="BUFF"|visits$sp1 =="COME"], 
+  stringsAsFactors = FALSE
 )
 #a.incub
 
+a.incub1<-a.incub[!is.na(a.incub$stage),]
 
-for (g in 1:length(a.incub$box)) {
-  a.incub$stage[g]=max(a.incub$stage[a.incub$box==a.incub$box[g]])
-  if (is.na(a.incub$stage[g])){a.incub$stage[g]=0}
-     
+for (g in 1:length(a.incub1$box)) {
+  a.incub1$stage[g]=max(a.incub1$stage[a.incub1$box==a.incub1$box[g]])
 }
 
-a.incub<-subset(a.incub, !(a.incub$stage==NA & a.incub$stage<3))
-#a.incub
-incub.hen<-unique(a.incub)
+#a.incub1
+
+a.incub2<-a.incub1[a.incub1$stage>3,]
+
+incub.hen<-aggregate(a.incub2$sp~a.incub2$box, FUN=max)
 #incub.hen
 
-incub.hen<-table(incub.hen$sp)
+names(incub.hen)<- c("box", "sp")
 
-incub.hen.freq<-incub.hen/occupancy[names(occupancy) %in% names(incub.hen)]
+incub.hen.tab<- table(incub.hen$sp)
+
+incub.hen.freq<-incub.hen.tab/occupancy[names(occupancy) %in% names(incub.hen.tab)]
 #incub.hen.freq
-
 # number boxes with squirrel kittens
 squirrels<- length(boxes$sp1[boxes$sp1=="RDSQ"])
 
 # number of boxes unavailable during first sweep
-unavailable<- length(visits$visit[visits$visit==1 & visits$sp1=="UNAV"])
+# does not work unless data files are read in without subsetting out UNAV rows
+# unavailable<- length(visits$visit[visits$visit==1 & visits$sp1=="UNAV"])
 #unavailable
 
 
