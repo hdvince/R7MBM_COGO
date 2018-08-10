@@ -8,19 +8,19 @@
 
 ##to run stats on the rec
 
-visits<-read.csv("R_2018_COGO_Box_Checks.csv", header=T, stringsAsFactors = F, na.strings = "")
+visits<-read.csv("2018_COGO_Box_Checks.csv", header=T, stringsAsFactors = F, na.strings = "")
 visits<-visits[ ,1:14]
 visits<-visits[visits$sp1 != "UNAV",]
 visits<-visits[!is.na(visits$box), ]
 visits<-visits[visits$site=="C",]
 
-boxes<-read.csv("R_2018_COGO_Box_Inventory.csv", header=T, stringsAsFactors = F)
+boxes<-read.csv("2018_COGO_Box_Inventory.csv", header=T, stringsAsFactors = F)
 boxes<-boxes[ ,1:11]
 boxes<-boxes[boxes$sp1 != "UNAV",]
 boxes<-boxes[!is.na(boxes$box), ]
 boxes<-boxes[boxes$site=="C",]
 
-eggs<-read.csv("R_2018_COGO_Egg_Fate.csv", header=T, stringsAsFactors = F)
+eggs<-read.csv("2018_COGO_Egg_Fate.csv", header=T, stringsAsFactors = F)
 eggs<-eggs[,1:8]
 eggs<-eggs[eggs$sp != "UNAV",]
 eggs<-eggs[!is.na(eggs$box), ]
@@ -402,7 +402,7 @@ hatch.time<-aggregate(hatched.time$hatch.day~hatched.time$box, FUN=min)
 hatch.days<-hatched.time$hatch.day
 hatch.days<-table(hatch.days)
 #hatch.days
-plot(hatch.days)
+plot(hatch.days, xlab="Julian Date", ylab="number of hatched boxes")
 
 
 

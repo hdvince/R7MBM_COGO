@@ -1,0 +1,275 @@
+---
+title: "2018 COGO Summary Report"
+subtitle: "Chena River State Recreation Area"
+author: "Hannah Vincelette"
+date: "8/7/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+source('Rec_COGO_Sum_Script.R')
+```
+
+This report summarizes basic statistics for the Common Goldeneye Project. R script has been previously written for these calculations and formatted to output this document. Any year of COGO data can be analyzed as long as it is formateed into the .csv data sheet templates provided and explained in the protocol (see Appendix V and VI of the Protocol). Each time this analysis is run for a specific year, double check that the correct data sheets are being read into the Rec_COGO_Sum_Script.R file. Only the year_ prefix should change. Before "knitting" this summary report, ammend the title, author, and date of this document to the reflect the current year. 
+
+Pay close attention to the definitions and caveats provided under each calculation. This report is not meant to substitute all summary calculations for the COGO project, just greatly speed along the process. In the case of special circumstances or curiousities, calculations can and should be done by hand to supplement the statistics provided in this document.
+
+If R refuses to create a markdown report because of an error somewhere in the script, you can troubleshoot this by opening the underlying file Rec_COGO_Sum_Script.R and running through it line by line until you find the error. If the issue is unclear, put hashtags (#) before each line of script until it all turns green. Save the Rec_COGO_Sum_Script.R and return to this file. Scroll down to the section associated with the calculation you just changed to green and hashtag the first line in the associated grey box. This will not fix the problem but will enable to you to create a summary report without the errored calculation. 
+
+
+### OCCUPANCY
+
+#### Number of boxes occupied by squirrels or unoccupied 
+
+* Squirrel occupancy = a box with >= 1 squirrel kitten
+* Unoccupied = a box that remains empty of an egg or squirrel kitten by the by the third study site sweep 
+
+```{r occupancy1}
+o.occupancy
+```
+
+
+#### Number of boxes in which a bird laid >= 1 egg (by species)
+```{r occupancy3}
+occupancy
+```
+
+
+#### Number of boxes in which a bird incubated >= 1 egg (by species)
+* Incubated eggs are indicated by eggs developed beyond "fresh"
+* Only considers incubating COGO, BUFF, & COME boxes w/ stage>3, which removes dump and early abandonment nests
+
+```{r occupancy4}
+incub.hen.tab
+```
+
+#### Frequency of boxes in which a bird incubated >= 1 egg (by species)
+* Incubated eggs are indicated by eggs developed beyond "fresh"
+* Only considers incubating COGO, BUFF, & COME boxes w/ stage>3, which removes dump and early abandonment nests
+* Frequency is out of the total number of boxes in which a bird laid >= 1 egg
+
+```{r occupancy4a}
+incub.hen.freq
+```
+#### Occupancy combinations 
+* Based boxes in which a bird laid >= 1 egg
+* Omits boxes with >2 species of laying hens (i.e.if there are three species of eggs present)
+* Will not account for AMKE & OTHER species
+
+```{r occupancy5}
+combos
+```
+
+### EGGS
+
+#### Total number eggs laid (by species)
+```{r eggs1}
+total.eggs
+```
+
+#### Species clutch stats (by species)
+* Species clutch= number of eggs laid in a nest box of the same species as the primary, incubating hen (as indicated by the hen that is captured and verified on multiple occasions)
+* Does not consider dump nests
+```{r eggs2}
+clutch
+```
+
+
+#### Total clutch size stats (by species)
+* Total clutch= total number of eggs laid in a nest box (including all species)
+* Does not consider dump nests
+```{r eggs3}
+clutch.tot
+```
+
+#### Number of boxes with >1 species of egg (all species)
+* Does not take into account if the primary hen (sp1) changes throughout the season, only considers the final sp1 hen
+```{r eggs4}
+boxes.o.eggs
+```
+
+#### Number of eggs predated (all species)
+* Eggs are assumed predated when they go missing (documented with an "NA"" in the hatched column)
+* Does not count ducklings found dead (documented with hatched=1 abd marked=0)
+* Does not consider owls
+
+```{r eggs5}
+predation.eggs
+```
+
+#### Number of boxes predated (all species)
+* When >= 1 egg went missing
+* Eggs are assumed predated when they go missing (documented with an "NA"" in the hatched column)
+* Does not count ducklings found dead (documented with hatched=1 abd marked=0)
+* Does not consider owls
+
+```{r eggs6}
+predation.boxes
+```
+
+### NESTING
+
+#### Nest initiation stats of COGO & BUFF
+* Nest Initiation Day = the day the first egg is laid
+* This assumes 28 days of incubation, a max clutch of 8, and an egg laying rate of every other day
+* Only considers marked boxes
+```{r nesting1}
+init
+```
+
+#### Nest initiation stats of COME
+* Nest Initiation Day = the day the first egg is laid
+* This assumes 32 days of incubation, a max clutch of 8, and an egg laying rate of every other day
+* Only considers marked boxes
+
+```{r nesting2}
+init.COME
+```
+
+#### Nest incubation stats of COGO & BUFF
+* Start of Initiation = the day a hen begins incubating the nest 
+* This assumes 28 days of incubation, a max clutch of 8, and an egg laying rate of every other day
+* Only considers marked boxes
+```{r nesting3}
+incub
+```
+
+#### Nest incubation stats of COME
+* Start of Initiation = the day a hen begins incubating the nest 
+* This assumes 32 days of incubation, a max clutch of 8, and an egg laying rate of every other day
+* Only considers marked boxes
+```{r nesting4}
+incub.COME
+```
+
+#### Hatch date stats (by species)
+* Hatch day = the day hacthlings are found in the nest 
+* hatched box = >1 egg hatched from the primary species clutch 
+* Only considers marked boxes
+* Does not consider BOOW
+```{r nesting5}
+hatch
+```
+
+### NEST SUCCESS
+
+#### Outcomes (by species)
+* Outcome = the final outcome of the nest by the end of the season, which may be less certain and must be determined based on multiple factors
+```{r nest.success1}
+outcome.sp
+```
+
+#### Outcome frequencies (by species)
+* Outcome = the final outcome of the nest by the end of the season, which may be less certain and must be determined based on multiple factors
+* Frequency out of the total number of boxes in which a bird laid >= 1 egg 
+```{r nest.success2}
+outcome.freq
+```
+
+#### Number of hatched boxes (by species)
+* hatched box = >1 egg hatched from the primary species clutch 
+* Species clutch= number of eggs laid in a nest box of the same species as the primary, incubating hen (as indicated by the hen that is captured and verified on multiple occasions)
+```{r nest.success3}
+hatched
+```
+
+#### Frequency of hatched boxes (by species)
+* hatched box = >1 egg hatched from the primary species clutch 
+* Frequency out of the total number of boxes in which a bird laid >= 1 egg 
+```{r nest.success4}
+freq.hatched
+```
+
+#### Plot of hatched boxes over time (totals all species)
+* hatched box = >1 egg hatched from the primary species clutch 
+* Only considers marked COGO, BUFF, & COME boxes
+```{r nest.success5}
+print(plot(hatch.days, xlab="Julian Date", ylab="number of hatched boxes"))
+```
+
+#### Plot of COGO hatched boxes vs species clutch size
+* hatched box = >1 egg hatched from the primary species clutch 
+* Species clutch: number of eggs laid in a nest box of the same species as the primary, incubating hen (as indicated by the hen that is captured and verified on multiple occasions)
+```{r nest.success6}
+print(plot(sp.clutch.tab, ylab="number hatches", xlab ="sp clutch size"))
+```
+
+#### Plot of COGO hatched boxes vs total clutch size
+* hatched box = >1 egg hatched from the primary species clutch 
+* Total clutch: total number of eggs laid in a nest box (including all species)
+```{r nest.success7}
+print(plot(total.clutch.tab, ylab= "number hatches", xlab ="total clutch size"))
+```
+
+#### Plot of COGO hatched boxes vs initatiation date
+* hatched box = >1 egg hatched from the primary species clutch 
+* Nest Initiation Day = the day the first egg is laid
+* This assumes 28 days of incubation, a max clutch of 8, and an egg laying rate of every other day
+* Only considers marked boxes
+```{r nest.success8}
+print(plot(init.hatch.COGO, xlab="initiation date", ylab="number hatched boxes"))
+```
+
+### EGG SUCCESS
+#### Number of COGO eggs hatched in COGO, BUFF, & COME boxes
+* Includes assumed hatched eggs from missed hatch boxes
+```{r egg.success1}
+COGO.eggs
+```
+
+#### Frequency of COGO eggs hatched in COGO boxes
+* Includes assumed hatched eggs from missed hatch boxes
+* Frequency out of total number of COGO eggs hatched
+```{r egg.success2}
+COGO.eggs.prop
+```
+
+#### Number of hatched eggs (by species)
+* Includes assumed hatched eggs from missed hatch boxes
+```{r egg.success3}
+hatched.sp
+```
+
+#### Frequency of hatched eggs (by species)
+* Includes assumed hatched eggs from missed hatch boxes
+* Frequency out of total eggs laid by each species
+```{r egg.success4}
+hatched.freq
+```
+
+### HATCHLINGS
+
+#### Number of hatchlings marked (by species)
+* Marked = a webtag and/or plasticine band was applied to the duckling
+```{r hatchling1}
+marked.sp
+```
+
+#### Frequency of hatchlings marked (by species)
+* Marked = a webtag and/or plasticine band was applied to the duckling
+* total hatched eggs includes assumed hatched eggs from missed hatch boxes
+* Frequency out of total eggs hatched by each species
+```{r hatchling2}
+hatched.sp.freq
+```
+
+### HEN CAPTURE
+#### Hen status (by species)
+* recap = recaptured; the hen was already banded during the first capture this field season
+* new = the hen did not have a band during the first capture this field season and a band was applied 
+* uncap = uncaptured; atleast one egg was laid in a nest box, but no hen was capture out of that box
+* Includes assumed hatched eggs from missed hatch boxes
+* Frequency out of total eggs hatched by each species
+```{r hen1}
+hen.status
+```
+
+#### Number of hens with other markers (by species)
+* Possible markers include web-tags and/or plasticine bands
+```{r hen2}
+hen.mark
+```
+
+
