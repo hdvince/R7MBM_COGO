@@ -129,7 +129,9 @@ $(document).ready(function () {
 </div>
 
 
-<p>explanation to be added</p>
+<p>This report summarizes basic statistics for the Common Goldeneye Project. R script has been previously written for these calculations and formatted to output this document. Any year of COGO data can be analyzed as long as it is formateed into the .csv data sheet templates provided and explained in the protocol (see Appendix V and VI of the Protocol). Each time this analysis is run for a specific year, double check that the correct data sheets are being read into the Rec_COGO_Sum_Script.R file. Only the year_ prefix should change. Before “knitting” this summary report, ammend the title, author, and date of this document to the reflect the current year.</p>
+<p>Pay close attention to the definitions and caveats provided under each calculation. This report is not meant to substitute all summary calculations for the COGO project, just greatly speed along the process. In the case of special circumstances or curiousities, calculations can and should be done by hand to supplement the statistics provided in this document.</p>
+<p>If R refuses to create a markdown report because of an error somewhere in the script, you can troubleshoot this by opening the underlying file Corps_COGO_Sum_Script.R and running through it line by line until you find the error. If the issue is unclear, put hashtags (#) before each line of script until it all turns green. Save the Rec_COGO_Sum_Script.R and return to this file. Scroll down to the section associated with the calculation you just changed to green and hashtag the first line in the associated grey box. This will not fix the problem but will enable to you to create a summary report without the errored calculation.</p>
 <div id="occupancy" class="section level3">
 <h3>OCCUPANCY</h3>
 <div id="number-of-boxes-occupied-by-squirrels-or-unoccupied" class="section level4">

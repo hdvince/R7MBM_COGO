@@ -1,7 +1,7 @@
 ---
 title: "Priority Box List"
-author: "Hannah Vincelette"
-date: "8/7/2018"
+author: "name(s)"
+date: "date"
 output: html_document
 ---
 This document is meant to aid the researchers on the Common Goldeneye Project in the field in their attempt to efficiently check nest boxes to minimize box disturbance and maximize the number of boxes visited on hatch day (in which at least one of the eggs is hatched and marked - see the protocol for details). The WhichBox function prioritizes box based on three criteria: the number of days since the last box check (since), the number of days until the predicted pip day (to.pip), and the number of days until the predicted hatch day (to.hatch).
@@ -110,7 +110,7 @@ WhichBox=function(data.path, today=0){
 
 ```{r CheckListTable}
 
-data=WhichBox("/Volumes/USB20FD/R7MBM_COGO/incomplete_for_test.csv", today=170)
+data=WhichBox("D:/USB20FD/R7MBM_COGO/year_COGO_Box_Checks.csv", today= Julian Date )
 
 
 data
