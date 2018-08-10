@@ -4,6 +4,30 @@ author: "Hannah Vincelette"
 date: "8/7/2018"
 output: html_document
 ---
+This document is meant to aid the researchers on the Common Goldeneye Project in the field in their attempt to efficiently check nest boxes to minimize box disturbance and maximize the number of boxes visited on hatch day (in which at least one of the eggs is hatched and marked - see the protocol for details). The WhichBox function prioritizes box based on three criteria: the number of days since the last box check (since), the number of days until the predicted pip day (to.pip), and the number of days until the predicted hatch day (to.hatch).
+
+Some important things to keep in mind:
+
+* The list will be created based on the date entered at the bottom of the Source window (the top window, above the Console). If no date is provided, R will use the last recorded date.
+
+* 0s refer to today. For example, if a box has 0 days to pip, it is pipping today. If it has 1 day to pip, it is pipping tomorrow and should go on your box check list tomorrow. 
+
+* The since column is meant to highlight any boxes that haven't been checked in awhile and may need a status update (per the protocol, a box should not go more than 14 days without being checked). 
+
+* When a box is "done" (i.e. it was hatched and marked, hatched and missed, determined abandoned, determined predated, ect) it should have NA in the to.pip and to.hatch columns. This way, boxes that are disregarded for the season are not listed as boxes that need to be checked. 
+
+* This function assumes 28 days of incubation for COGO and BUFF eggs, 32 days of incubation for COME eggs, and is based on the last box check and the stage of incubation that day (which is the most advanced stage of the species clutch, see Appendix V in the protocol for details).
+
+* If a box has not started incubating (the eggs are fresh and stage =0) the function assumes the hen will start incubating today and that hatch day will occur in 28 days for COGO and BUFF hens and 32 days for COME hens. 
+
+* If a stage is unknown for the last box check (stage=NA in the data sheets) then the to.pip and to.hatch columns for that box will also be NA. This will most often be the case for UNOC, RDSQ, COME, and BOOW boxes. 
+
+* Owls will often have negative to.pip and to.hatch columns. This is because owlets will be hatched for a few weeks before they are big enough to be banded and the box is disregarded as "done". It is best to ignore the to.pip and to.hatch columns and focus on the since columns. Depending on how big the owlets were when you last checked the box, you can use the since column to determine when it is best to re-visit the box. Remember that, for owls, hatch day is more accurately described as the day owlets were found in the box. 
+
+* Most importantly, remember that this priority box list is meant to guide the decision on which boxes to check, not make the decision. Always take other factors into consideration before heading out into the field (i.e. weather conditions, BUFFs seems to be hatching in 27 days not 28 this year, ect)
+
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -83,11 +107,6 @@ WhichBox=function(data.path, today=0){
 
 
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r CheckListTable}
 
@@ -98,12 +117,4 @@ data
 
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
